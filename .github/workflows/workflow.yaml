@@ -9,9 +9,18 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
+    permissions:
+      contents: read
+      id-token: write
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
 
       - name: Cache npm dependencies
         uses: actions/cache@v4
@@ -20,11 +29,13 @@ jobs:
           key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
             ${{ runner.os }}-node-
-      # - name: Configure Google Cloud SDK
-      #   uses: google-github-actions/setup-gcloud@v0.5.0
-      #   with:
-      #     project_id: learngcp-418900
-      #     service_account_key: ${{ secrets.SERVICE_ACCOUNT_KEY }}
+
+      - name: Check for Service Account Key
+        run: |
+          if [ -z "${{ secrets.SERVICE_ACCOUNT_KEY }}" ]; then
+            echo "Missing SERVICE_ACCOUNT_KEY secret"
+            exit 1
+          fi
 
       - id: 'auth'
         uses: 'google-github-actions/auth@v2'
@@ -49,4 +60,11 @@ jobs:
 
       - name: Post Deployment Cleanup
         run: |
-          # Cleaning up after deployment
+          echo "Cleaning up after deployment"
+          # Add any cleanup commands here if necessary
+
+      - name: Notify on Failure
+        if: failure()
+        run: |
+          echo "Deployment failed. Notifying the team."
+          # Add notification commands here (e.g., send a message to Slack)
