@@ -40,7 +40,11 @@ jobs:
       - id: 'auth'
         uses: 'google-github-actions/auth@v2'
         with:
-          credentials_json: '${{ secrets.SERVICE_ACCOUNT_KEY }}'
+          # credentials_json: '${{ secrets.SERVICE_ACCOUNT_KEY }}'
+          # workload_identity_provider: '${{ secrets.WORKLOAD_IDENTITY_PROVIDER }}'
+          # service_account: '${{ secrets.SERVICE_ACCOUNT_EMAIL }}'
+          workload_identity_provider: 'projects/993297422782/locations/global/workloadIdentityPools/github/providers/my-repo'
+          service_account: 'storage-admin-bhuy@learngcp-418900.iam.gserviceaccount.com'
 
       - name: 'Set up Cloud SDK'
         uses: 'google-github-actions/setup-gcloud@v2'
