@@ -12,7 +12,6 @@ jobs:
     permissions:
       contents: read
       id-token: write
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -37,21 +36,21 @@ jobs:
       #       exit 1
       #     fi
 
-      - id: 'auth'
-        uses: 'google-github-actions/auth@v2'
+      - id: "auth"
+        uses: "google-github-actions/auth@v2"
         with:
           # credentials_json: '${{ secrets.SERVICE_ACCOUNT_KEY }}'
           # workload_identity_provider: '${{ secrets.WORKLOAD_IDENTITY_PROVIDER }}'
           # service_account: '${{ secrets.SERVICE_ACCOUNT_EMAIL }}'
-          project_id: 'learngcp-418900'
-          workload_identity_provider: 'projects/993297422782/locations/global/workloadIdentityPools/github/providers/my-repo'
-          # service_account: 'storage-admin-bhuy@learngcp-418900.iam.gserviceaccount.com'
+          project_id: "learngcp-418900"
+          workload_identity_provider: "projects/993297422782/locations/global/workloadIdentityPools/github/providers/my-repo"
+          service_account: "storage-admin-bhuy@learngcp-418900.iam.gserviceaccount.com"
 
-      - name: 'Set up Cloud SDK'
-        uses: 'google-github-actions/setup-gcloud@v2'
+      - name: "Set up Cloud SDK"
+        uses: "google-github-actions/setup-gcloud@v2"
 
-      - name: 'Use gcloud CLI'
-        run: 'gcloud info'
+      - name: "Use gcloud CLI"
+        run: "gcloud info"
 
       - name: Install dependencies
         run: npm install
@@ -68,12 +67,20 @@ jobs:
           echo "Cleaning up after deployment"
           # Add any cleanup commands here if necessary
 
-      # - name: Notify Slack on failure
-      # if: failure()
-      # uses: 8398a7/action-slack@v3
-      # with:
-      #   status: ${{ job.status }}
-      #   fields: job,repo,commit,author,action,eventName,ref,workflow,took
-      #   webhook_url: ${{ secrets.SLACK_WEBHOOK_URL }}
-      # env:
-      #   SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+      - name: Notify success
+        if: success()
+        uses: 8398a7/action-slack@v3
+        with:
+          status: success
+          fields: repo,message,commit,author,action,eventName,ref,workflow,job,took
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+
+      - name: Notify failure
+        if: failure()
+        uses: 8398a7/action-slack@v3
+        with:
+          status: failure
+          fields: repo,message,commit,author,action,eventName,ref,workflow,job,took
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
