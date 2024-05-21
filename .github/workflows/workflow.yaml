@@ -12,7 +12,6 @@ jobs:
     permissions:
       contents: read
       id-token: write
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -30,27 +29,36 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-node-
 
-      - name: Check for Service Account Key
-        run: |
-          if [ -z "${{ secrets.SERVICE_ACCOUNT_KEY }}" ]; then
-            echo "Missing SERVICE_ACCOUNT_KEY secret"
-            exit 1
-          fi
+      # - name: Check for Service Account Key
+      #   run: |
+      #     if [ -z "${{ secrets.SERVICE_ACCOUNT_KEY }}" ]; then
+      #       echo "Missing SERVICE_ACCOUNT_KEY secret"
+      #       exit 1
+      #     fi
 
-      - id: 'auth'
-        uses: 'google-github-actions/auth@v2'
+      - id: "auth"
+        uses: "google-github-actions/auth@v2"
         with:
           # credentials_json: '${{ secrets.SERVICE_ACCOUNT_KEY }}'
           # workload_identity_provider: '${{ secrets.WORKLOAD_IDENTITY_PROVIDER }}'
           # service_account: '${{ secrets.SERVICE_ACCOUNT_EMAIL }}'
-          workload_identity_provider: 'projects/993297422782/locations/global/workloadIdentityPools/github/providers/my-repo'
-          service_account: 'storage-admin-bhuy@learngcp-418900.iam.gserviceaccount.com'
+          project_id: "learngcp-418900"
+          workload_identity_provider: "projects/993297422782/locations/global/workloadIdentityPools/github/providers/my-repo"
+          # service_account: "storage-admin-bhuy@learngcp-418900.iam.gserviceaccount.com"
 
-      - name: 'Set up Cloud SDK'
-        uses: 'google-github-actions/setup-gcloud@v2'
+      - name: Find and print the content of the credentials file
+        run: |
+          # Find the latest JSON file created in the directory
+          CREDS_FILE=$(ls -t /home/runner/work/fe-repo/fe-repo/*.json | head -n 1)
+          echo "Found credentials file: $CREDS_FILE"
+          # Print the content of the credentials file
+          cat $CREDS_FILE
 
-      - name: 'Use gcloud CLI'
-        run: 'gcloud info'
+      - name: "Set up Cloud SDK"
+        uses: "google-github-actions/setup-gcloud@v2"
+
+      - name: "Use gcloud CLI"
+        run: "gcloud info"
 
       - name: Install dependencies
         run: npm install
@@ -67,8 +75,20 @@ jobs:
           echo "Cleaning up after deployment"
           # Add any cleanup commands here if necessary
 
-      - name: Notify on Failure
+      - name: Notify success
+        if: success()
+        uses: 8398a7/action-slack@v3
+        with:
+          status: success
+          fields: repo,message,commit,author,action,eventName,ref,workflow,job,took
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+
+      - name: Notify failure
         if: failure()
-        run: |
-          echo "Deployment failed. Notifying the team."
-          # Add notification commands here (e.g., send a message to Slack)
+        uses: 8398a7/action-slack@v3
+        with:
+          status: failure
+          fields: repo,message,commit,author,action,eventName,ref,workflow,job,took
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
