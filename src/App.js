@@ -15,9 +15,7 @@ function App() {
           target="_blank"
           rel="noopener noreferrer"
         >
-          Hello Bhuy aaaaaaa 2222 update cache
-
-          
+          Hello World
         </a>
       </header>
     </div>

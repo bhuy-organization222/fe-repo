@@ -1,4 +1,4 @@
-name: Deploy to Cloud Storage using Google Cloud SDK
+name: Deploy static file to Cloud Storage using Google Cloud SDK
 
 on:
   push:
@@ -42,17 +42,17 @@ jobs:
           # credentials_json: '${{ secrets.SERVICE_ACCOUNT_KEY }}'
           # workload_identity_provider: '${{ secrets.WORKLOAD_IDENTITY_PROVIDER }}'
           # service_account: '${{ secrets.SERVICE_ACCOUNT_EMAIL }}'
-          project_id: "learngcp-418900"
+          # project_id: "learngcp-418900"
           workload_identity_provider: "projects/993297422782/locations/global/workloadIdentityPools/github/providers/my-repo"
-          # service_account: "storage-admin-bhuy@learngcp-418900.iam.gserviceaccount.com"
+          service_account: "storage-admin-bhuy@learngcp-418900.iam.gserviceaccount.com"
 
-      - name: Find and print the content of the credentials file
-        run: |
-          # Find the latest JSON file created in the directory
-          CREDS_FILE=$(ls -t /home/runner/work/fe-repo/fe-repo/*.json | head -n 1)
-          echo "Found credentials file: $CREDS_FILE"
-          # Print the content of the credentials file
-          cat $CREDS_FILE
+      # - name: Find and print the content of the credentials file
+      #   run: |
+      #     # Find the latest JSON file created in the directory
+      #     CREDS_FILE=$(ls -t /home/runner/work/fe-repo/fe-repo/*.json | head -n 1)
+      #     echo "Found credentials file: $CREDS_FILE"
+      #     # Print the content of the credentials file
+      #     cat $CREDS_FILE
 
       - name: "Set up Cloud SDK"
         uses: "google-github-actions/setup-gcloud@v2"

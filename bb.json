@@ -1,0 +1,14 @@
+{
+  "type": "external_account",
+  "audience": "//iam.googleapis.com/projects/399377201308/locations/global/workloadIdentityPools/jenkin/providers/jenkin",
+  "subject_token_type": "urn:ietf:params:oauth:token-type:jwt",
+  "token_url": "https://sts.googleapis.com/v1/token",
+  "service_account_impersonation_url": "https://iamcredentials.googleapis.com/v1/projects/-/serviceAccounts/jenkin@rational-aria-416911.iam.gserviceaccount.com:generateAccessToken",
+  "credential_source": {
+    "file": "/usr/share/token/key",
+    "format": {
+      "type": "json",
+      "subject_token_field_name": "access_token"
+    }
+  }
+}
