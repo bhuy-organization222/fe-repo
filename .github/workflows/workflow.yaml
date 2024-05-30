@@ -44,7 +44,9 @@ jobs:
           # service_account: '${{ secrets.SERVICE_ACCOUNT_EMAIL }}'
           # project_id: "learngcp-418900"
           workload_identity_provider: "projects/993297422782/locations/global/workloadIdentityPools/github/providers/my-repo"
-          service_account: "storage-admin-bhuy@learngcp-418900.iam.gserviceaccount.com"
+          # service_account: "storage-admin-bhuy@learngcp-418900.iam.gserviceaccount.com"
+          service_account: "test-auth-fedaration@learngcp-418900.iam.gserviceaccount.com"
+
 
       # - name: Find and print the content of the credentials file
       #   run: |
