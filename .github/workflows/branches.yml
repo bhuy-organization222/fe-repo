@@ -1,0 +1,17 @@
+name: branches
+on:
+  push:
+    branches:
+    - "!{develop}"
+jobs:
+  step_job_1:
+    runs-on: ubuntu-latest
+    container:
+      image: node:20-alpine
+    steps:
+    - uses: actions/checkout@v4.1.0
+    - name: check-lint
+      run: |-
+        cd function
+        yarn --dev
+        yarn lint

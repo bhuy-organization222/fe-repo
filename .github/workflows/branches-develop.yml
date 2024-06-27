@@ -1,0 +1,33 @@
+name: branches-develop
+on:
+  push:
+    branches: "{develop}"
+jobs:
+  step_job_1:
+    runs-on: ubuntu-latest
+    container:
+      image: node:20-alpine
+    steps:
+    - uses: actions/checkout@v4.1.0
+    - name: check-lint
+      run: |-
+        cd function
+        yarn --dev
+        yarn lint
+  step_job_2:
+    runs-on: ubuntu-latest
+    container:
+      image: google/cloud-sdk:latest
+    needs:
+    - step_job_1
+    steps:
+    - uses: actions/checkout@v4.1.0
+    - name: build and deploy
+      run: |-
+        curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash
+        source $HOME/.nvm/nvm.sh
+        nvm install 20
+        node --version
+        npm --version
+        npm install -g yarn
+        /bin/bash -x build-pipeline.sh
